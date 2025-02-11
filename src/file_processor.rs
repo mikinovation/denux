@@ -68,7 +68,7 @@ mod tests {
     use tempfile::NamedTempFile;
 
     thread_local! {
-        static MOCK_CALLED: RefCell<Option<String>> = RefCell::new(None);
+        static MOCK_CALLED: RefCell<Option<String>> = const { RefCell::new(None) };
     }
 
     fn mock_process_script_setup(input: &str) -> String {
