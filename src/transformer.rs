@@ -87,13 +87,15 @@ impl VisitMut for ImportInserter {
     }
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {
-        if let Expr::Call(CallExpr { callee, .. }) = expr {
-            if let Callee::Expr(boxed_expr) = callee {
-                if let Expr::Ident(ident) = &**boxed_expr {
-                    let func_name = ident.sym.to_string();
-                    if !self.used_functions.contains(&func_name) {
-                        self.used_functions.push(func_name);
-                    }
+        if let Expr::Call(CallExpr {
+            callee: Callee::Expr(boxed_expr),
+            ..
+        }) = expr
+        {
+            if let Expr::Ident(ident) = &**boxed_expr {
+                let func_name = ident.sym.to_string();
+                if !self.used_functions.contains(&func_name) {
+                    self.used_functions.push(func_name);
                 }
             }
         }
@@ -104,7 +106,7 @@ impl VisitMut for ImportInserter {
     fn visit_mut_jsx_element(&mut self, jsx: &mut JSXElement) {
         if let JSXElementName::Ident(ident) = &jsx.opening.name {
             let component_name = ident.sym.to_string();
-            let components = vec!["NuxtLink", "Suspense", "NuxtLayout", "NuxtPage"];
+            let components = ["NuxtLink", "Suspense", "NuxtLayout", "NuxtPage"];
 
             if components.contains(&component_name.as_str())
                 && !self.used_functions.contains(&component_name)
